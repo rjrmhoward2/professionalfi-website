@@ -1,0 +1,9 @@
+# Ignore Windows system folders
+Saved Games/
+VagalSync/
+Videos/
+ntuser*
+*.LOG*
+*.ini
+.vscode/
+node_modules/
