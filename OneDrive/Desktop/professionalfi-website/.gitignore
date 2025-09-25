@@ -1,9 +1,8 @@
-# Ignore Windows system folders
-Saved Games/
-VagalSync/
-Videos/
-ntuser*
-*.LOG*
-*.ini
-.vscode/
+﻿# Windows junk
+Thumbs.db
+Desktop.ini
+*.tmp
+
+# Folders to ignore
 node_modules/
+.vscode/
