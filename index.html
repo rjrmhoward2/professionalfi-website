@@ -1428,40 +1428,37 @@
                 source: 'professionalfi-landing'
             };
 
-            // Submit to Beehiiv API
-            fetch('https://api.beehiiv.com/v2/publications/pub_3a79631b-5f1a-4852-b3f7-ceda5239ac70/subscriptions', {
+            // Submit to Beehiiv using their public form endpoint
+            // Note: Custom fields may not be supported via public endpoint
+            const formBody = new URLSearchParams({
+                'email': formData.email,
+                'first_name': formData.firstName,
+                'last_name': formData.lastName,
+                'practice_type': formData.practiceType,
+                'specialty': formData.specialty || '',
+                'patient_volume': formData.patientVolume,
+                'referring_site': 'professionalfi-landing',
+                'utm_source': 'professionalfi-landing',
+                'utm_medium': 'website',
+                'utm_campaign': 'early-access'
+            });
+
+            fetch('https://embeds.beehiiv.com/v2/subscription', {
                 method: 'POST',
                 headers: {
-                    'Authorization': 'Bearer ZiVhHZzwGwVC9GTghXkfkAsBo5aQRkD0aleevhZcckgP8De7TSCpJAqh73ItjwGv',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify({
-                    email: formData.email,
-                    custom_fields: {
-                        first_name: formData.firstName,
-                        last_name: formData.lastName,
-                        practice_type: formData.practiceType,
-                        specialty: formData.specialty,
-                        patient_volume: formData.patientVolume,
-                        source: formData.source
-                    },
-                    reactivate_existing: false,
-                    send_welcome_email: true,
-                    utm_source: 'professionalfi-landing',
-                    utm_medium: 'website',
-                    utm_campaign: 'early-access'
-                })
+                body: 'publication_id=3a79631b-5f1a-4852-b3f7-ceda5239ac70&' + formBody.toString()
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Beehiiv subscription successful:', data);
+            .then(response => {
+                console.log('Beehiiv response:', response);
                 // Show success message
                 document.getElementById('earlyAccessForm').style.display = 'none';
                 document.getElementById('successMessage').style.display = 'block';
             })
             .catch(error => {
                 console.error('Beehiiv subscription error:', error);
-                // Still show success message to user (don't expose API errors)
+                // Still show success message to user
                 document.getElementById('earlyAccessForm').style.display = 'none';
                 document.getElementById('successMessage').style.display = 'block';
             });
