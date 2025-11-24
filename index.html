@@ -1428,40 +1428,35 @@
                 source: 'professionalfi-landing'
             };
 
-            // Submit to Beehiiv using their public form endpoint
-            // Note: Custom fields may not be supported via public endpoint
-            const formBody = new URLSearchParams({
-                'email': formData.email,
-                'first_name': formData.firstName,
-                'last_name': formData.lastName,
-                'practice_type': formData.practiceType,
-                'specialty': formData.specialty || '',
-                'patient_volume': formData.patientVolume,
-                'referring_site': 'professionalfi-landing',
-                'utm_source': 'professionalfi-landing',
-                'utm_medium': 'website',
-                'utm_campaign': 'early-access'
+            // Store form data locally as backup
+            const applications = JSON.parse(localStorage.getItem('professionalfi-applications') || '[]');
+            applications.push({
+                ...formData,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('professionalfi-applications', JSON.stringify(applications));
+
+            // Log for debugging
+            console.log('Form submitted:', formData);
+
+            // Redirect to Beehiiv magic link with custom fields
+            const magicLinkBase = 'https://magic.beehiiv.com/v1/3a79631b-5f1a-4852-b3f7-ceda5239ac70';
+            const params = new URLSearchParams({
+                email: formData.email,
+                utm_source: 'professionalfi-landing',
+                utm_medium: 'website',
+                utm_campaign: 'early-access',
+                // Add custom fields as URL parameters (Beehiiv may support these)
+                first_name: formData.firstName,
+                last_name: formData.lastName,
+                practice_type: formData.practiceType,
+                specialty: formData.specialty || '',
+                patient_volume: formData.patientVolume,
+                source: formData.source
             });
 
-            fetch('https://embeds.beehiiv.com/v2/subscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'publication_id=3a79631b-5f1a-4852-b3f7-ceda5239ac70&' + formBody.toString()
-            })
-            .then(response => {
-                console.log('Beehiiv response:', response);
-                // Show success message
-                document.getElementById('earlyAccessForm').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Beehiiv subscription error:', error);
-                // Still show success message to user
-                document.getElementById('earlyAccessForm').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-            });
+            // Redirect to magic link - Beehiiv will handle the subscription
+            window.location.href = `${magicLinkBase}?${params.toString()}`;
 
             return false;
         }
