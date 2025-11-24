@@ -1439,13 +1439,16 @@
             // Log for debugging
             console.log('Form submitted:', formData);
 
-            // Redirect to Beehiiv magic link with custom fields
+            // Redirect to Beehiiv magic link with custom fields and return URL
             const magicLinkBase = 'https://magic.beehiiv.com/v1/3a79631b-5f1a-4852-b3f7-ceda5239ac70';
+            const returnUrl = window.location.origin + '/?subscribed=true';
+
             const params = new URLSearchParams({
                 email: formData.email,
                 utm_source: 'professionalfi-landing',
                 utm_medium: 'website',
                 utm_campaign: 'early-access',
+                redirect_url: returnUrl,
                 // Add custom fields as URL parameters (Beehiiv may support these)
                 first_name: formData.firstName,
                 last_name: formData.lastName,
@@ -1491,6 +1494,21 @@
 
         // Initialize calculator with default values
         updateCalculator();
+
+        // Check if user just subscribed via Beehiiv magic link
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('subscribed') === 'true') {
+                // Show success message
+                const successBanner = document.createElement('div');
+                successBanner.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: #10b981; color: white; padding: 20px; text-align: center; z-index: 10000; font-size: 18px; font-weight: 600;';
+                successBanner.innerHTML = '✓ Success! You\'re on the waitlist. We\'ll contact you when ProfessionalFi launches. <button onclick="this.parentElement.remove()" style="margin-left: 20px; background: white; color: #10b981; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: 600;">Close</button>';
+                document.body.insertBefore(successBanner, document.body.firstChild);
+
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
     </script>
 </body>
 </html>
