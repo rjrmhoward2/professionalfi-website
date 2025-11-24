@@ -1439,16 +1439,14 @@
             // Log for debugging
             console.log('Form submitted:', formData);
 
-            // Redirect to Beehiiv magic link with custom fields and return URL
+            // Redirect to Beehiiv magic link with custom fields
             const magicLinkBase = 'https://magic.beehiiv.com/v1/3a79631b-5f1a-4852-b3f7-ceda5239ac70';
-            const returnUrl = window.location.origin + '/?subscribed=true';
 
             const params = new URLSearchParams({
                 email: formData.email,
                 utm_source: 'professionalfi-landing',
                 utm_medium: 'website',
                 utm_campaign: 'early-access',
-                redirect_url: returnUrl,
                 // Add custom fields as URL parameters (Beehiiv may support these)
                 first_name: formData.firstName,
                 last_name: formData.lastName,
